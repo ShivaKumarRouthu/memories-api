@@ -12,7 +12,7 @@ export const getPosts = async (req, res) => {
 
 export const createPost = async (req, res) => {
   const newPost = req.body;
-  const postMessage = new PostMessage(newPost);
+  const postMessage = new PostMessage({...newPost, creator: req.userId, createdAt: new Date().toISOString()});
   try {
     await postMessage.save();
     res.status(201).json(postMessage);
@@ -41,9 +41,16 @@ export const deletePost = async (req, res) => {
 
 export const likePost = async (req, res) => {
   const { id } = req.params;
+  if(!req.userId) return res.json({ message: 'Unauthorized user' });
   if(!mongoose.Types.ObjectId.isValid(id)) return res.status(440).send('No Posts Available');
   const post = await PostMessage.findById(id);
-  const updatedPost = await PostMessage.findByIdAndUpdate(id, { likeCount: post.likeCount+1 }, { new: true });
+  const isAlreadyLiked = post.likes.findIndex((likeId) => likeId === req.userId);
+  if(isAlreadyLiked === -1) {
+    post.likes.push(req.userId);
+  } else {
+    post.likes = post.likes.filter((likeId) => likeId !== req.userId);
+  }
+  const updatedPost = await PostMessage.findByIdAndUpdate(id, post, { new: true });
   res.json(updatedPost);
 }
 
