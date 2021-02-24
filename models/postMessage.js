@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 const postMessage = new mongoose.Schema({
   title: String,
   message: String,
+  name: String,
   creator: String,
   tags: [String],
   selectedFile: String,
@@ -10,9 +11,9 @@ const postMessage = new mongoose.Schema({
     type: Date,
     default: new Date()
   },
-  likeCount: {
-    type: Number,
-    default: 0
+  likes: {
+    type: [String],
+    default: []
   }
 });
 
