@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import postRoutes from './routes/posts.js';
+import userRoutes from './routes/users.js';
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(cors());
 
 app.get('/', (req, res) => { res.send('Memories API works!')});
 app.use('/posts', postRoutes);
+app.use('/user', userRoutes);
 
 const CONNECTION_URL=`mongodb+srv://${process.env.DB_AUTH_USER}:${process.env.DB_AUTH_SECRET}@cluster0.rwaq3.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 const PORT = process.env.PORT || 5000;
